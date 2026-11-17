@@ -10,19 +10,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y libtool-bin libltdl-dev automake autoconf pkg-config lld build-essential zip unzip openjdk-17-jdk
+          pip install --upgrade pip
+          pip install buildozer "cython<3.0.0"
 
-      - name: Build with Buildozer
-        uses: digreatbrian/buildozer-action@v2
-        with:
-          command: buildozer android debug
-          repository_root: .
+      - name: Build APK
+        run: |
+          yes | buildozer -v android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: HindMundhir-APK
           path: bin/*.apk
+          
