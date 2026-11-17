@@ -1,0 +1,28 @@
+name: Build Android APK
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libtool-bin libltdl-dev automake autoconf pkg-config lld build-essential zip unzip openjdk-17-jdk
+
+      - name: Build with Buildozer
+        uses: digreatbrian/buildozer-action@v2
+        with:
+          command: buildozer android debug
+          repository_root: .
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: HindMundhir-APK
+          path: bin/*.apk
